@@ -1,0 +1,9 @@
+[submodule "authors"]
+	path = authors
+	url = https://github.com/feh-wilinando/fj91-microservices-authors.git
+[submodule "books"]
+	path = books
+	url = https://github.com/feh-wilinando/fj91-microservices-books.git
+[submodule "books-shop"]
+	path = books-shop
+	url = https://github.com/feh-wilinando/fj91-microservices-books-shop.git
