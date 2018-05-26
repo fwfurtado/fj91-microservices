@@ -19,6 +19,7 @@
         <module>authors</module>
         <module>books</module>
         <module>books-shop</module>
+        <module>service-discovery</module>
     </modules>
 
 

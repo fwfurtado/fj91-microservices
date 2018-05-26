@@ -1,0 +1,74 @@
+version: '3'
+
+
+services:
+  loadbalance:
+    image: nginx:alpine
+    command: /bin/sh -c "cat /etc/nginx/conf.d/loadbalance.nginx > /etc/nginx/conf.d/loadbalance.conf && nginx -g 'daemon off;'"
+    volumes:
+      - ./service-discovery/nginx/config/loadbalance/:/etc/nginx/conf.d/
+    ports:
+      - "8010:80"
+    depends_on:
+      - peer1
+      - peer2
+      - peer3
+
+  peer1:
+    image: microservice-service-discovery
+    environment:
+      - "DEFAULT_ZONE=http://peer2:8080/eureka/,http://peer3:8080/eureka/"
+    restart: on-failure
+
+  peer2:
+    image: microservice-service-discovery
+    environment:
+      - "DEFAULT_ZONE=http://peer1:8080/eureka/,http://peer3:8080/eureka/"
+    restart: on-failure
+
+  peer3:
+    image: microservice-service-discovery
+    environment:
+      - "DEFAULT_ZONE=http://peer1:8080/eureka/,http://peer2:8080/eureka/"
+    restart: on-failure
+
+  authors:
+    image: microservice-authors
+    environment:
+      - SERVICE_DISCOVERY_HOST=http://loadbalance/eureka
+      - DATABASE_HOST=db
+    restart: on-failure
+    ports:
+          - "8080:8080"
+    depends_on:
+      - db
+
+  books:
+    image: microservice-books
+    environment:
+      - SERVICE_DISCOVERY_HOST=http://loadbalance/eureka
+      - DATABASE_HOST=db
+    restart: on-failure
+    ports:
+          - "8081:8081"
+    depends_on:
+      - db
+
+  shop:
+    image: microservice-books-shop
+    environment:
+      - SERVICE_DISCOVERY_HOST=http://loadbalance/eureka
+    ports:
+      - "8082:8082"
+    restart: on-failure
+
+  db:
+    image: mysql:5
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - authors_volume:/var/lib/mysql
+
+
+volumes:
+  authors_volume:

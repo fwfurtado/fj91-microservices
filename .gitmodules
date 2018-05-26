@@ -7,3 +7,6 @@
 [submodule "books-shop"]
 	path = books-shop
 	url = https://github.com/feh-wilinando/fj91-microservices-books-shop.git
+[submodule "service-discovery"]
+	path = service-discovery
+	url = https://github.com/feh-wilinando/fj91-microservices-service-discovery.git
